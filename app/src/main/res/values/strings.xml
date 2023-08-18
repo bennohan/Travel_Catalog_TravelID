@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Travel Catalog TravelID</string>
+    <string name="mustFillPhone">Nomor telphone wajib Diisi</string>
+    <string name="mustFillPassword">Password wajib Diisi</string>
+    <string name="mustFillConfirmPassword">Confirm Password wajib Diisi</string>
+    <string name="mustFillName">Nama wajib Diisi</string>
+
+</resources>
