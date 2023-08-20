@@ -1,7 +1,10 @@
 package com.bennohan.travelcatalogtravelid.ui.detail_travel
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -9,8 +12,12 @@ import com.bennohan.travelcatalogtravelid.R
 import com.bennohan.travelcatalogtravelid.base.BaseActivity
 import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.bennohan.travelcatalogtravelid.databinding.ActivityDetailDestinationBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.crocodic.core.api.ApiStatus
+import com.crocodic.core.extension.tos
 import com.denzcoskun.imageslider.ImageSlider
+import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -19,36 +26,65 @@ import kotlinx.coroutines.launch
 class DetailDestinationActivity :
     BaseActivity<ActivityDetailDestinationBinding, DetailDestinationViewModel>(R.layout.activity_detail_destination) {
 
-//    private val imageList = ArrayList<String>()
+    private lateinit var ratingww: String
+    private  var destinationId: Int? = null
+
+    lateinit var sharedPreferences: SharedPreferences
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         getDestinationById()
         observe()
+        resultCondition()
 
         binding.btnBack.setOnClickListener {
             finish()
         }
 
-//        val imageSlider = findViewById<ImageSlider>(R.id.iv_destination)
-//        imageSlider.setImageList()
+
+        binding.btnDestinationSave.setOnClickListener {
+            savedDestination()
+        }
+
 
     }
+
+    private fun resultCondition() {
+        when (sharedPreferences.getBoolean("result", false)) {
+            true -> {
+                // Kode yang akan dijalankan jika result bernilai true
+                binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_24)
+            }
+            false -> {
+                // Kode yang akan dijalankan jika result bernilai false
+                binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_border_24)
+            }
+
+        }
+    }
+
+    private fun savedDestination() {
+        destinationId?.let { viewModel.saveDestination(it) }
+        Log.d("cekId", destinationId.toString())
+    }
+
+    fun setBooleanResult(value: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("result", value)
+        editor.apply()
+    }
+
 
     private fun getDestinationById() {
         val id = intent.getIntExtra(Const.DESTINATION.ID_DESTINATION, 0)
-        Log.d("cek getInt Id", id.toString())
         viewModel.getDestinationById(id)
+        destinationId = id
     }
-
-//     private fun initSlider(data: List<String>) {
-//        val imageList = ArrayList<SlideModel>()
-//        data.forEach { _ ->
-//            imageList.add(SlideModel(String()))
-//        }
-//        binding.ivDestination.setImageList(imageList, ScaleTypes.CENTER_CROP)
-//    }
 
 
     private fun observe() {
@@ -59,6 +95,23 @@ class DetailDestinationActivity :
                         when (it.status) {
                             ApiStatus.LOADING -> loadingDialog.show()
                             ApiStatus.SUCCESS -> {
+                                when(it.message){
+                                    "Saved" -> {
+                                        tos("Saved")
+                                        loadingDialog.dismiss()
+                                        setBooleanResult(true).apply {
+                                            binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_24)
+
+                                        }
+                                    }
+                                    "unSaved" -> {
+                                        tos("unSaved")
+                                        loadingDialog.dismiss()
+                                        setBooleanResult(false).apply {
+                                            binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_border_24)
+                                        }
+                                    }
+                                }
                             }
                             ApiStatus.ERROR -> {
                                 disconnect(it)
@@ -71,32 +124,46 @@ class DetailDestinationActivity :
                     }
                 }
                 launch {
-                    viewModel.dataDestination.collect {
+                    viewModel.dataDestination.collect { it ->
                         Log.d("cek dataDestination", it.toString())
                         binding.destination = it
-//                        val imageList = it?.photo ?: emptyList()
+
+                        ratingww = it?.rating.toString()
+                        ratingww.let { it1 -> Log.d("cek get rating Id", it1) }
+
+
+                        val floatValue = if (it?.rating?.isNotEmpty() == true) {
+                            it.rating.replace(",", ".").toFloat()
+                        } else {
+                            0.0f // or any default value you want to set
+                        }
+                        binding.rbDestinationRating.rating = floatValue
+
+
                         val imageList = if (it?.photo != null) {
                             it.photo
                         } else {
                             emptyList()
                         }
-                        val imageSlider = findViewById<ImageSlider>(R.id.iv_destination)
-                        val imageUrls = mutableListOf<SlideModel>()
-                        for (imageUrl in imageList) {
-                            val slideModel = SlideModel(imageUrl)
-                            imageUrls.add(slideModel)
+
+                        if (imageList.isNullOrEmpty()){
+                            binding.ivDestinationPlaceholder.visibility = View.VISIBLE
+                        }else{
+                            val imageSlider = findViewById<ImageSlider>(R.id.iv_destination)
+
+
+                            val imageUrls = mutableListOf<SlideModel>()
+                            for (imageUrl in imageList) {
+                                val slideModel = SlideModel(imageUrl)
+                                imageUrls.add(slideModel)
+                            }
+
+                            imageSlider.setImageList(imageUrls)
+                            Log.d("cek dataImageUrls",imageUrls.toString())
                         }
-                        imageSlider.setImageList(imageUrls)
-                        Log.d("cek dataImageUrls",imageUrls.toString())
-                        Log.d("cek dataImage",imageList.toString())
+
                     }
                 }
-//                launch {
-//                    viewModel.dataImage.collect {
-//                        Log.d("cek dataImage", it.toString())
-//                        imageList.add(SlideModel(it).toString())
-//                    }
-//                }
 
             }
         }

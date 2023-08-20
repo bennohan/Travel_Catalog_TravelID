@@ -13,6 +13,7 @@ import com.bennohan.travelcatalogtravelid.database.UserDao
 import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.bennohan.travelcatalogtravelid.databinding.ActivityHomeBinding
 import com.bennohan.travelcatalogtravelid.databinding.ItemDestinationBinding
+import com.bennohan.travelcatalogtravelid.ui.FragmentBottomSheet
 import com.bennohan.travelcatalogtravelid.ui.detail_travel.DetailDestinationActivity
 import com.bennohan.travelcatalogtravelid.ui.profile.ProfileActivity
 import com.bumptech.glide.Glide
@@ -100,7 +101,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding , HomeViewModel>(R.layout.
         }
 
         binding.btnFilter.setOnClickListener {
-            showCustomDialog()
+            val bottomSheetFragment = FragmentBottomSheet()
+            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+
         }
 
     }

@@ -51,6 +51,14 @@ interface ApiService {
     ): String
 
 
+    //USER
+    //SAVE_DESTINATION
+    @FormUrlEncoded
+    @POST("user/save-destination")
+    suspend fun saveDestination(
+        @Field("destination_id") id : Int
+    ): String
+
 
 
 }

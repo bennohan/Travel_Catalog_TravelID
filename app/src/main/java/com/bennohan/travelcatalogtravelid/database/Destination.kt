@@ -35,6 +35,9 @@ data class Destination(
     @Expose
     @SerializedName("photo")
     val photo: List<String>?,
+//    @Expose
+//    @SerializedName("photo")
+//    val photoS: String?,
     @Expose
     @SerializedName("price")
     val price: String?,

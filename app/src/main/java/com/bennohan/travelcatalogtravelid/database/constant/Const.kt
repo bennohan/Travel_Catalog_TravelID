@@ -7,4 +7,7 @@ object Const {
     object DESTINATION {
         const val ID_DESTINATION = "id"
     }
+    object SAVED {
+        const val SAVE_DESTINATION = "save"
+    }
 }

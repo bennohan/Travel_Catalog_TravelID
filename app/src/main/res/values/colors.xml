@@ -10,5 +10,5 @@
     <color name="main_color">#BE3333</color>
     <color name="header_grey">#DADADA</color>
     <color name="green">#34A353</color>
-
+    <color name="button_categories_color">#E4E4E4</color>
 </resources>

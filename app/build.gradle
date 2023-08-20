@@ -74,6 +74,9 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.5.2'
 
     //image Slider
-    implementation 'com.github.denzcoskun:ImageSlideshow:0.1.0'
+//    implementation 'com.github.denzcoskun:ImageSlideshow:0.1.0'
+    implementation 'com.github.wahyudotdev:ImageSlideshow:0.1.0'
+
+
 
 }
