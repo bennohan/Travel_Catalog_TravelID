@@ -139,6 +139,7 @@
                         android:layout_height="70dp">
 
                         <ImageButton
+                            android:id="@+id/btn_filter_historical"
                             android:layout_width="50dp"
                             android:src="@drawable/historical_button_icon"
                             android:scaleType="centerCrop"
@@ -166,6 +167,7 @@
                         android:layout_height="70dp">
 
                         <ImageButton
+                            android:id="@+id/btn_filter_beach"
                             android:layout_width="50dp"
                             android:src="@drawable/beach_button_icon"
                             android:scaleType="centerCrop"
@@ -193,6 +195,7 @@
                         android:layout_height="70dp">
 
                         <ImageButton
+                            android:id="@+id/btn_filter_mountain"
                             android:layout_width="50dp"
                             android:src="@drawable/mountain_button_icon"
                             android:scaleType="centerCrop"
@@ -221,6 +224,7 @@
                         android:layout_height="70dp">
 
                         <ImageButton
+                            android:id="@+id/btn_filter_education"
                             android:layout_width="50dp"
                             android:src="@drawable/education_button_icon"
                             android:scaleType="centerCrop"
@@ -248,6 +252,7 @@
                         android:layout_height="70dp">
 
                         <ImageButton
+                            android:id="@+id/btn_filter_religious"
                             android:layout_width="50dp"
                             android:src="@drawable/religious_button_icon"
                             android:scaleType="centerCrop"

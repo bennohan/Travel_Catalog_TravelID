@@ -17,6 +17,7 @@ import com.bennohan.travelcatalogtravelid.base.BaseActivity
 import com.bennohan.travelcatalogtravelid.database.UserDao
 import com.bennohan.travelcatalogtravelid.databinding.ActivityProfileBinding
 import com.bennohan.travelcatalogtravelid.helper.ViewBindingHelper.Companion.writeBitmap
+import com.bennohan.travelcatalogtravelid.ui.login.LoginActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.crocodic.core.api.ApiStatus
@@ -109,7 +110,7 @@ class ProfileActivity :
             val buttonCancel = dialog.findViewById<Button>(R.id.btn_dialog_cancel)
 //
             buttonLogout.setOnClickListener {
-                tos("logout")
+                viewModel.logout()
             }
 
             buttonCancel.setOnClickListener {
@@ -205,7 +206,15 @@ class ProfileActivity :
                         when (it.status) {
                             ApiStatus.LOADING -> loadingDialog.show()
                             ApiStatus.SUCCESS -> {
-                                binding.root.snacked("Profile Edited")
+                                when(it.message){
+                                    "Logout" ->{
+                                        openActivity<LoginActivity>{
+                                            finishAffinity()
+                                        }
+                                    }
+                                }
+
+                                    binding.root.snacked("Profile Edited")
                             }
                             ApiStatus.ERROR -> {
                                 disconnect(it)

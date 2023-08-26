@@ -76,5 +76,24 @@ class ProfileViewModel @Inject constructor(
             })
     }
 
+    fun logout(
+    ) = viewModelScope.launch {
+        _apiResponse.emit(ApiResponse().responseLoading())
+        ApiObserver({ apiService.logout() },
+            false,
+            object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    _apiResponse.emit(ApiResponse().responseSuccess("Logout"))
+
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    super.onError(response)
+                    _apiResponse.emit(ApiResponse().responseError())
+
+                }
+            })
+    }
+
 
 }

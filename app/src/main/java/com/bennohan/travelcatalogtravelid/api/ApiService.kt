@@ -24,6 +24,11 @@ interface ApiService {
         @Field("confirm_password") confirmPassword: String?,
     ): String
 
+    //Logout
+    @POST("logout")
+    suspend fun logout(
+    ): String
+
     //Edit Profile
     @FormUrlEncoded
     @POST("user/edit-profile")
@@ -48,6 +53,12 @@ interface ApiService {
     @GET("destination/{id}/detail")
     suspend fun destinationById(
         @Path("id") id : Int
+    ): String
+
+    //GET DESTINATION BY Category
+    @GET("destination/filter-by-category/{id}")
+    suspend fun getDestinationByCategory(
+        @Path("id") idCategory : Int
     ): String
 
 

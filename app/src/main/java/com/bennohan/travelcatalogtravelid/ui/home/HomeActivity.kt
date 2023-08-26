@@ -106,6 +106,22 @@ class HomeActivity : BaseActivity<ActivityHomeBinding , HomeViewModel>(R.layout.
 
         }
 
+        binding.btnFilterHistorical.setOnClickListener {
+            viewModel.getListDestinationByCategory(5)
+        }
+        binding.btnFilterBeach.setOnClickListener {
+            viewModel.getListDestinationByCategory(2)
+        }
+        binding.btnFilterMountain.setOnClickListener {
+            viewModel.getListDestinationByCategory(6)
+        }
+        binding.btnFilterEducation.setOnClickListener {
+            viewModel.getListDestinationByCategory(4)
+        }
+        binding.btnFilterReligious.setOnClickListener {
+            viewModel.getListDestinationByCategory(9)
+        }
+
     }
 
 
@@ -145,6 +161,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding , HomeViewModel>(R.layout.
                 launch {
                     viewModel.listDestination.collect { destination ->
                     adapterDestination.submitList(destination)
+                    }
+                }
+                launch {
+                    viewModel.filterListDestination.collect { filterDestination ->
+                        adapterDestination.submitList(filterDestination)
                     }
                 }
                 launch {
