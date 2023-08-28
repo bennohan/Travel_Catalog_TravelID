@@ -32,9 +32,12 @@ data class Destination(
     @Expose
     @SerializedName("name")
     val name: String?,
+//    @Expose
+//    @SerializedName("photo")
+//    val photo: List<String>?,
     @Expose
     @SerializedName("photo")
-    val photo: List<String>?,
+    val photo: String?,
 //    @Expose
 //    @SerializedName("photo")
 //    val photoS: String?,

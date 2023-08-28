@@ -49,6 +49,9 @@ interface ApiService {
     @GET("destination/list")
     suspend fun destinationList(): String
 
+    @GET("list-category")
+    suspend fun destinationCategory(): String
+
     //GET DESTINATION BY ID
     @GET("destination/{id}/detail")
     suspend fun destinationById(

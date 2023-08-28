@@ -22,7 +22,7 @@ class FragmentBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val button = view.findViewById<Button>(R.id.button)
+        val button = view.findViewById<Button>(R.id.btn_dialog_filter)
 
         button.setOnClickListener {
             val toast = Toast.makeText(requireActivity(), "tes", Toast.LENGTH_LONG)

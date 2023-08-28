@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         app:cardCornerRadius="10dp"
@@ -15,17 +16,9 @@
                 android:id="@+id/linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent">
 
-
-                <LinearLayout
-                    android:id="@+id/linear_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/tv_category"
@@ -38,6 +31,15 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_category"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:id="@+id/rv_category"/>
+
                     <TextView
                         android:id="@+id/tv_province"
                         android:layout_width="wrap_content"
@@ -49,80 +51,42 @@
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent" />
 
-                    <TextView
-                        android:id="@+id/tv_city"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:text="City"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tv_shortBy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:text="Short By"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linear_dropdown"
+                <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/linear_title"
-                    app:layout_constraintTop_toTopOf="parent">
+                    tools:listitem="@layout/item_category"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    android:id="@+id/rv_province"/>
 
 
-                    <AutoCompleteTextView
-                        android:id="@+id/dropdown_category"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:background="@drawable/dropdown_background"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <!--                    <TextView-->
+<!--                        android:id="@+id/tv_city"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:layout_marginTop="5dp"-->
+<!--                        android:text="City"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="20sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        app:layout_constraintStart_toStartOf="parent" />-->
 
-
-                    <AutoCompleteTextView
-                        android:id="@+id/dropdown_province"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/dropdown_background"
-                        app:layout_constraintEnd_toEndOf="parent" />
-
-                    <AutoCompleteTextView
-                        android:id="@+id/dropdown_city"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/dropdown_background"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.811" />
-
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/dropdown_background"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.811" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_shortBy"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:layout_marginTop="5dp"-->
+<!--                        android:text="Short By"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="20sp"-->
+<!--                        android:textStyle="bold"-->
+<!--                        app:layout_constraintStart_toStartOf="parent" />-->
 
 
                 </LinearLayout>
 
-            </LinearLayout>
+
 
 
             <androidx.appcompat.widget.AppCompatButton
