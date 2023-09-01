@@ -32,12 +32,12 @@ data class Destination(
     @Expose
     @SerializedName("name")
     val name: String?,
-//    @Expose
-//    @SerializedName("photo")
-//    val photo: List<String>?,
     @Expose
     @SerializedName("photo")
-    val photo: String?,
+    val photo: List<String>?,
+//    @Expose
+//    @SerializedName("photo")
+//    val photo: String?,
 //    @Expose
 //    @SerializedName("photo")
 //    val photoS: String?,
@@ -53,5 +53,6 @@ data class Destination(
 //    val rating: Float?,
     @Expose
     @SerializedName("updated_at")
-    val updatedAt: String?
+    val updatedAt: String?,
+    var selected: Boolean
 )

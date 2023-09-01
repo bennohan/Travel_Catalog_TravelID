@@ -124,7 +124,7 @@ class DetailDestinationActivity :
                     }
                 }
                 launch {
-                    viewModel.dataDestination.collect { it ->
+                    viewModel.dataDestination.collect {
                         Log.d("cek dataDestination", it.toString())
                         binding.destination = it
 
@@ -143,24 +143,24 @@ class DetailDestinationActivity :
                         val imageList = if (it?.photo != null) {
                             it.photo
                         } else {
-//                            emptyList()
+                            emptyList()
                         }
 
-//                        if (imageList.isNullOrEmpty()){
-//                            binding.ivDestinationPlaceholder.visibility = View.VISIBLE
-//                        }else{
-//                            val imageSlider = findViewById<ImageSlider>(R.id.iv_destination)
-//
-//
-//                            val imageUrls = mutableListOf<SlideModel>()
-//                            for (imageUrl in imageList) {
-//                                val slideModel = SlideModel(imageUrl)
-//                                imageUrls.add(slideModel)
-//                            }
-//
-//                            imageSlider.setImageList(imageUrls)
-//                            Log.d("cek dataImageUrls",imageUrls.toString())
-//                        }
+                        if (imageList.isNullOrEmpty()){
+                            binding.ivDestinationPlaceholder.visibility = View.VISIBLE
+                        }else{
+                            val imageSlider = findViewById<ImageSlider>(R.id.iv_destination)
+
+
+                            val imageUrls = mutableListOf<SlideModel>()
+                            for (imageUrl in imageList) {
+                                val slideModel = SlideModel(imageUrl)
+                                imageUrls.add(slideModel)
+                            }
+
+                            imageSlider.setImageList(imageUrls)
+                            Log.d("cek dataImageUrls",imageUrls.toString())
+                        }
 
                     }
                 }

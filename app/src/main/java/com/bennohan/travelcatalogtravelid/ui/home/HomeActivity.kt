@@ -1,13 +1,9 @@
 package com.bennohan.travelcatalogtravelid.ui.home
 
-import android.app.Dialog
 import android.os.Bundle
-import android.text.Layout
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,7 +16,6 @@ import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.bennohan.travelcatalogtravelid.databinding.ActivityHomeBinding
 import com.bennohan.travelcatalogtravelid.databinding.ItemCategoryBinding
 import com.bennohan.travelcatalogtravelid.databinding.ItemDestinationBinding
-import com.bennohan.travelcatalogtravelid.ui.FragmentBottomSheet
 import com.bennohan.travelcatalogtravelid.ui.detail_travel.DetailDestinationActivity
 import com.bennohan.travelcatalogtravelid.ui.profile.ProfileActivity
 import com.bumptech.glide.Glide
@@ -30,7 +25,6 @@ import com.crocodic.core.base.adapter.ReactiveListAdapter
 import com.crocodic.core.extension.openActivity
 import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,6 +36,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
 
     @Inject
     lateinit var userDao: UserDao
+     var dataDestination = ArrayList<Destination?>()
 
 
     private val adapterDestination by lazy {
@@ -68,7 +63,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                     if (item.photo?.isNotEmpty() == true) {
                         Glide
                             .with(this@HomeActivity)
-                            .load(item.photo)
+                            .load(item.photo[0])
+//                            .load("http://magang.crocodic.net/ki/Arya/Project-Catalog/public/storage/destination/f496a13e-7684-4399-bd8a-0da160aa054b.jpg")
                             .apply(RequestOptions.centerCropTransform())
                             .into(holder.binding.ivThumbnailTour)
                     } else {
@@ -78,11 +74,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                             .apply(RequestOptions.centerCropTransform())
                             .into(holder.binding.ivThumbnailTour)
                     }
-//                    Glide
-//                        .with(this@HomeActivity)
-//                        .load(item.photo)
-//                        .apply(RequestOptions.centerCropTransform())
-//                        .into(holder.binding.ivThumbnailTour)
                     android.util.Log.d("cek photo", item.photo.toString())
                 }
 
@@ -112,15 +103,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
 
                 item?.let { itm ->
                     holder.bind(itm)
+                    holder.binding.textView.text = itm.category
 
                 }
 
-                holder.binding.textView.text = item.category
-                holder.binding.textView.setOnClickListener {
-                    tos("${item.category}")
-
-                    //TODO DATA DI OLAH
-                }
+                    holder.binding.cardCategory.setOnClickListener {
+                        tos("${item.category}")
+//                        holder.binding.cardCategory.setBackgroundColor(resources.getColor(R.color.main_color))
+                    }
 
             }
         }
@@ -134,7 +124,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         getDestinationList()
         destinationCategory()
         observe()
-
+        search()
+        Log.d("cek list dataDestination",dataDestination.toString())
 
         binding.ivIconProfile.setOnClickListener {
             openActivity<ProfileActivity>()
@@ -162,6 +153,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
 
     }
 
+    private fun search() {
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            if (text!!.isNotEmpty()) {
+                val filter = dataDestination.filter {
+                    it?.name?.contains(
+                        "$text",
+                        true
+                    ) == true
+                }
+                adapterDestination.submitList(filter)
+
+//                if (filter.isEmpty()) {
+//                    binding!!.tvNoteNotFound.visibility = View.VISIBLE
+//                } else {
+//                    binding!!.tvNoteNotFound.visibility = View.GONE
+//                }
+            } else {
+                adapterCategory.submitList(dataDestination)
+            }
+        }
+    }
 
 
     private fun observe() {
@@ -203,6 +215,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                     viewModel.listDestinationCategory.collect { listCategory ->
                         Log.d("cek list category",listCategory.toString())
                         adapterCategory.submitList(listCategory)
+                        dataDestination.clear()
+                        dataDestination.addAll(listCategory)
                     }
                 }
             }
