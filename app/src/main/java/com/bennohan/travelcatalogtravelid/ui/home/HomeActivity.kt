@@ -2,7 +2,10 @@ package com.bennohan.travelcatalogtravelid.ui.home
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -29,14 +32,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//TODO DATA CATEGORY BELUM DI OLAH
+//TODO KONDISI DI ADAPTER CATEGORY WARNA BELUM BERUBAH , TP BUTTON JALAN Mac
 //FILTER DILANJUTKAN
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.activity_home) {
 
     @Inject
     lateinit var userDao: UserDao
-     var dataDestination = ArrayList<Destination?>()
+    var dataDestination = ArrayList<Destination?>()
 
 
     private val adapterDestination by lazy {
@@ -98,6 +101,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
             ) {
                 super.onBindViewHolder(holder, position)
                 val item = getItem(position)
+                var selectedItemPosition :Int = -1
+                val colorResourceTrue = R.color.main_color
+                val colorResourceFalse = R.color.white
+
 
 
 
@@ -105,12 +112,42 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                     holder.bind(itm)
                     holder.binding.textView.text = itm.category
 
+
                 }
 
-                    holder.binding.cardCategory.setOnClickListener {
-                        tos("${item.category}")
+
+
+
+
+                holder.binding.cardCategory.setOnClickListener {
+                    tos("${item.category}")
+                }
+
+            }
+        }
+    }
+
+    private val adapterProvince by lazy {
+        object : ReactiveListAdapter<ItemCategoryBinding, Destination>(R.layout.item_category) {
+            override fun onBindViewHolder(
+                holder: ItemViewHolder<ItemCategoryBinding, Destination>,
+                position: Int
+            ) {
+                super.onBindViewHolder(holder, position)
+                val item = getItem(position)
+
+
+
+                item?.let { itm ->
+                    holder.bind(itm)
+                    holder.binding.textView.text = itm.name
+
+                }
+
+                holder.binding.cardCategory.setOnClickListener {
+                    tos("${item.category}")
 //                        holder.binding.cardCategory.setBackgroundColor(resources.getColor(R.color.main_color))
-                    }
+                }
 
             }
         }
@@ -123,9 +160,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         binding.rvTravel.adapter = adapterDestination
         getDestinationList()
         destinationCategory()
+        destinationProvince()
         observe()
         search()
-        Log.d("cek list dataDestination",dataDestination.toString())
+        Log.d("cek list dataDestination", dataDestination.toString())
 
         binding.ivIconProfile.setOnClickListener {
             openActivity<ProfileActivity>()
@@ -199,6 +237,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 launch {
                     viewModel.listDestination.collect { destination ->
                         adapterDestination.submitList(destination)
+                        dataDestination.clear()
+                        dataDestination.addAll(destination)
                     }
                 }
                 launch {
@@ -213,10 +253,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 }
                 launch {
                     viewModel.listDestinationCategory.collect { listCategory ->
-                        Log.d("cek list category",listCategory.toString())
+                        Log.d("cek list category", listCategory.toString())
                         adapterCategory.submitList(listCategory)
-                        dataDestination.clear()
-                        dataDestination.addAll(listCategory)
+                    }
+                }
+                launch {
+                    viewModel.listDestinationProvince.collect { listProvince ->
+                        Log.d("cek list category", listProvince.toString())
+                        adapterProvince.submitList(listProvince)
                     }
                 }
             }
@@ -231,6 +275,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         viewModel.getListDestinationCategory()
     }
 
+    private fun destinationProvince() {
+        viewModel.getListDestinationProvince()
+    }
+
     private fun showBottomSheetDialog() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.fragment_bottom_sheet, null)
@@ -238,7 +286,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         // Find and set up UI components inside the bottom sheet layout
         val buttonInsideDialog = view.findViewById<Button>(R.id.btn_dialog_filter)
         val rvCategory = view.findViewById<RecyclerView>(R.id.rv_category)
+        val rvProvince = view.findViewById<RecyclerView>(R.id.rv_province)
         rvCategory.adapter = adapterCategory
+        rvProvince.adapter = adapterProvince
         buttonInsideDialog.setOnClickListener {
             // Handle button click inside the bottom sheet dialog
             bottomSheetDialog.dismiss() // Close the dialog if needed

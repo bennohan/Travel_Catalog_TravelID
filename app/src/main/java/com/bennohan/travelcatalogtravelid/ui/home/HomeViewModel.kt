@@ -33,6 +33,9 @@ class HomeViewModel @Inject constructor(
     private var _listDestinationCategory = MutableSharedFlow<List<Destination?>>()
     var listDestinationCategory = _listDestinationCategory.asSharedFlow()
 
+    private var _listDestinationProvince = MutableSharedFlow<List<Destination?>>()
+    var listDestinationProvince = _listDestinationProvince.asSharedFlow()
+
 
     //List Destination Function
     fun getListDestination(
@@ -87,6 +90,27 @@ class HomeViewModel @Inject constructor(
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestinationCategory.emit(data)
+                    _apiResponse.emit(ApiResponse().responseSuccess())
+
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    super.onError(response)
+                    _apiResponse.emit(ApiResponse().responseError())
+
+                }
+            })
+    }
+
+    fun getListDestinationProvince(
+        ) = viewModelScope.launch {
+        _apiResponse.emit(ApiResponse().responseLoading())
+        ApiObserver({ apiService.destinationProvince() },
+            false,
+            object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
+                    _listDestinationProvince.emit(data)
                     _apiResponse.emit(ApiResponse().responseSuccess())
 
                 }

@@ -1,6 +1,8 @@
 package com.bennohan.travelcatalogtravelid.ui.detail_travel
 
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -19,6 +21,7 @@ import com.crocodic.core.extension.tos
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
+import com.google.android.datatransport.runtime.Destination
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -27,7 +30,11 @@ class DetailDestinationActivity :
     BaseActivity<ActivityDetailDestinationBinding, DetailDestinationViewModel>(R.layout.activity_detail_destination) {
 
     private lateinit var ratingww: String
+    private lateinit var destinationName: String
     private  var destinationId: Int? = null
+
+    private var destination : com.bennohan.travelcatalogtravelid.database.Destination? = null
+
 
     lateinit var sharedPreferences: SharedPreferences
 
@@ -49,6 +56,10 @@ class DetailDestinationActivity :
 
         binding.btnDestinationSave.setOnClickListener {
             savedDestination()
+        }
+
+        binding.btnOpenMaps.setOnClickListener {
+            sendLocationIntent()
         }
 
 
@@ -85,6 +96,16 @@ class DetailDestinationActivity :
         viewModel.getDestinationById(id)
         destinationId = id
     }
+
+    private fun sendLocationIntent() {
+        val intentUri = Uri.parse("google.navigation:q=${destinationName}&mode=d")
+        Log.d("cek destination name",destinationName)
+        val mapIntent = Intent(Intent.ACTION_VIEW, intentUri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+        startActivity(mapIntent)
+    }
+
+
 
 
     private fun observe() {
@@ -127,7 +148,7 @@ class DetailDestinationActivity :
                     viewModel.dataDestination.collect {
                         Log.d("cek dataDestination", it.toString())
                         binding.destination = it
-
+                        destinationName = it?.name.toString()
                         ratingww = it?.rating.toString()
                         ratingww.let { it1 -> Log.d("cek get rating Id", it1) }
 
