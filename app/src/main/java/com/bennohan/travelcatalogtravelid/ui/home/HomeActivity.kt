@@ -32,15 +32,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//TODO KONDISI DI ADAPTER CATEGORY WARNA BELUM BERUBAH , TP BUTTON JALAN Mac
+//TODO Filter Category belum buat fungsi di viewmodel
+//PC
 //FILTER DILANJUTKAN
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.activity_home) {
 
     @Inject
     lateinit var userDao: UserDao
-    var dataDestination = ArrayList<Destination?>()
-
+    private var dataDestination = ArrayList<Destination?>()
+    private var dataCategory = ArrayList<Destination?>()
+    private var dataProvince = ArrayList<Destination?>()
+    private var categoryId : Int? = null
 
     private val adapterDestination by lazy {
         object :
@@ -52,22 +55,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 super.onBindViewHolder(holder, position)
                 val item = getItem(position)
 
-
-
                 item?.let { itm ->
                     holder.binding.data = itm
                     holder.bind(itm)
 
                 }
 
-
-
                 holder.binding.ivThumbnailTour.let {
                     if (item.photo?.isNotEmpty() == true) {
                         Glide
                             .with(this@HomeActivity)
                             .load(item.photo[0])
-//                            .load("http://magang.crocodic.net/ki/Arya/Project-Catalog/public/storage/destination/f496a13e-7684-4399-bd8a-0da160aa054b.jpg")
                             .apply(RequestOptions.centerCropTransform())
                             .into(holder.binding.ivThumbnailTour)
                     } else {
@@ -77,9 +75,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                             .apply(RequestOptions.centerCropTransform())
                             .into(holder.binding.ivThumbnailTour)
                     }
-                    android.util.Log.d("cek photo", item.photo.toString())
                 }
-
 
                 holder.binding.constraint.setOnClickListener {
                     openActivity<DetailDestinationActivity> {
@@ -101,26 +97,29 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
             ) {
                 super.onBindViewHolder(holder, position)
                 val item = getItem(position)
-                var selectedItemPosition :Int = -1
-                val colorResourceTrue = R.color.main_color
-                val colorResourceFalse = R.color.white
-
-
-
 
                 item?.let { itm ->
                     holder.bind(itm)
                     holder.binding.textView.text = itm.category
-
-
+                    holder.binding.cardCategory.setBackgroundColor(
+                        if (item.selectedCategory) {
+                            applicationContext.getColor(R.color.button_selected)
+                        } else {
+                            applicationContext.getColor(R.color.white)
+                        }
+                    )
                 }
-
-
-
 
 
                 holder.binding.cardCategory.setOnClickListener {
                     tos("${item.category}")
+                    tos("${item.id}")
+                    categoryId = item.id
+                    Log.d("cek categoryId", categoryId.toString())
+                    dataCategory.forEachIndexed { index, variant ->
+                        variant?.selectedCategory = index == position
+                    }
+                    notifyDataSetChanged()
                 }
 
             }
@@ -136,17 +135,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 super.onBindViewHolder(holder, position)
                 val item = getItem(position)
 
-
-
                 item?.let { itm ->
                     holder.bind(itm)
                     holder.binding.textView.text = itm.name
-
+                    holder.binding.cardCategory.setBackgroundColor(
+                        if (item.selectedProvince) {
+                            applicationContext.getColor(R.color.button_selected)
+                        } else {
+                            applicationContext.getColor(R.color.white)
+                        }
+                    )
                 }
 
+
                 holder.binding.cardCategory.setOnClickListener {
-                    tos("${item.category}")
-//                        holder.binding.cardCategory.setBackgroundColor(resources.getColor(R.color.main_color))
+                    tos("${item.name}")
+                    tos("$position")
+                    dataProvince.forEachIndexed { index, variant ->
+                        variant?.selectedProvince = index == position
+                    }
+                    notifyDataSetChanged()
                 }
 
             }
@@ -253,12 +261,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 }
                 launch {
                     viewModel.listDestinationCategory.collect { listCategory ->
-                        Log.d("cek list category", listCategory.toString())
+                        dataCategory.clear()
+                        dataCategory.addAll(listCategory)
+                        Log.d("cek data category", dataCategory.toString())
                         adapterCategory.submitList(listCategory)
                     }
                 }
                 launch {
                     viewModel.listDestinationProvince.collect { listProvince ->
+                        dataProvince.clear()
+                        dataProvince.addAll(listProvince)
                         Log.d("cek list category", listProvince.toString())
                         adapterProvince.submitList(listProvince)
                     }
@@ -290,8 +302,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         rvCategory.adapter = adapterCategory
         rvProvince.adapter = adapterProvince
         buttonInsideDialog.setOnClickListener {
+            categoryId?.let { it1 -> viewModel.getListDestinationByCategory(it1) }
             // Handle button click inside the bottom sheet dialog
             bottomSheetDialog.dismiss() // Close the dialog if needed
+
         }
 
         bottomSheetDialog.setContentView(view)

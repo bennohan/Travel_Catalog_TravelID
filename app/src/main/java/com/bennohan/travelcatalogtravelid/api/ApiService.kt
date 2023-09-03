@@ -43,6 +43,12 @@ interface ApiService {
         @Part photoProfile : MultipartBody.Part?
     ): String
 
+    @Multipart
+    @GET("destination/filter-by-category/{id}")
+    suspend fun filterCategory(
+        @Path("id") id : Int
+    ): String
+
 
     //DESTINATION
     //GET DESTINATION LIST

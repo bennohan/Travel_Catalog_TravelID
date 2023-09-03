@@ -54,5 +54,6 @@ data class Destination(
     @Expose
     @SerializedName("updated_at")
     val updatedAt: String?,
-    var selected: Boolean
+    var selectedCategory: Boolean,
+    var selectedProvince: Boolean
 )
