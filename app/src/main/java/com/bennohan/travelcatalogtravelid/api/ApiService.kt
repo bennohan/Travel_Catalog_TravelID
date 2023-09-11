@@ -36,6 +36,7 @@ interface ApiService {
         @Field("name") name: String?,
     ): String
 
+    @FormUrlEncoded
     @Multipart
     @POST("user/edit-profile")
     suspend fun editProfilePhoto(
@@ -70,6 +71,11 @@ interface ApiService {
     //GET DESTINATION BY Category
     @GET("destination/filter-by-category/{id}")
     suspend fun getDestinationByCategory(
+        @Path("id") idCategory : Int
+    ): String
+
+    @GET("destination/filter-by-province/{id}")
+    suspend fun getDestinationByProvince(
         @Path("id") idCategory : Int
     ): String
 

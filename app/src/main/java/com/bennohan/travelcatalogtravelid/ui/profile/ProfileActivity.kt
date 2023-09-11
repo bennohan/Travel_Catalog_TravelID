@@ -36,7 +36,7 @@ class ProfileActivity :
     @Inject
     lateinit var userDao: UserDao
 
-    private var emailOrPhone : String? = null
+    private var emailOrPhone: String? = null
     private var filePhoto: File? = null
     private var isTextChangedByUser = false
 
@@ -47,7 +47,7 @@ class ProfileActivity :
         observe()
         tvEmailOrPhone()
 
-        binding.etName.let { setupTextWatcher(it) }
+        setupTextWatcher(binding.etName)
 
         binding.btnOpenPhoto.setOnClickListener {
             openPictureDialog()
@@ -57,7 +57,9 @@ class ProfileActivity :
             finish()
         }
 
-        editProfile()
+        binding.btnEditProfile.setOnClickListener {
+            editProfile()
+        }
 
         binding.btnLogout.setOnClickListener {
             logoutDialog()
@@ -69,10 +71,10 @@ class ProfileActivity :
         val name = binding.etName.textOf()
         val photo = filePhoto
 
-        if (photo == null){
+        if (photo == null) {
             viewModel.editProfile(name)
-        }else{
-            viewModel.editProfilePhoto(name,photo)
+        } else {
+            viewModel.editProfilePhoto(name, photo)
         }
 
     }
@@ -103,21 +105,21 @@ class ProfileActivity :
 
 
     private fun logoutDialog() {
-            val dialog = Dialog(this)
-            dialog.setContentView(R.layout.dialog_logout)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_logout)
 
-            val buttonLogout = dialog.findViewById<Button>(R.id.btn_dialog_logout)
-            val buttonCancel = dialog.findViewById<Button>(R.id.btn_dialog_cancel)
+        val buttonLogout = dialog.findViewById<Button>(R.id.btn_dialog_logout)
+        val buttonCancel = dialog.findViewById<Button>(R.id.btn_dialog_cancel)
 //
-            buttonLogout.setOnClickListener {
-                viewModel.logout()
-            }
+        buttonLogout.setOnClickListener {
+            viewModel.logout()
+        }
 
-            buttonCancel.setOnClickListener {
-                dialog.dismiss()
-            }
+        buttonCancel.setOnClickListener {
+            dialog.dismiss()
+        }
 
-            dialog.show()
+        dialog.show()
 
 
     }
@@ -125,14 +127,14 @@ class ProfileActivity :
     private fun tvEmailOrPhone() {
         //Function to addjust the text view base on email or phone
         if (emailOrPhone?.matches(Regex("\\d+")) == true) {
-            Log.d("cek number or email",emailOrPhone.toString())
+            Log.d("cek number or email", emailOrPhone.toString())
             // Eksekusi tindakan atau fungsi yang ingin Anda lakukan jika nilai hanya berisi angka.
             // Contoh:
             binding.textViewPhone.visibility = View.VISIBLE
             binding.imageViewPhone.visibility = View.VISIBLE
             tos("phone")
         } else {
-            Log.d("cek email",emailOrPhone.toString())
+            Log.d("cek email", emailOrPhone.toString())
             binding.textViewEmail.visibility = View.VISIBLE
             binding.imageViewEmail.visibility = View.VISIBLE
         }
@@ -149,11 +151,13 @@ class ProfileActivity :
                 when (which) {
                     0 -> (this@ProfileActivity).activityLauncher.openCamera(
                         this@ProfileActivity,
-                        "${this@ProfileActivity.packageName}.fileprovider") { file, _ ->
+                        "${this@ProfileActivity.packageName}.fileprovider"
+                    ) { file, _ ->
                         uploadAvatar(file)
                     }
                     1 -> (this@ProfileActivity).activityLauncher.openGallery(
-                        this@ProfileActivity) { file, _ ->
+                        this@ProfileActivity
+                    ) { file, _ ->
                         uploadAvatar(file)
                     }
                 }
@@ -181,8 +185,9 @@ class ProfileActivity :
         Log.d("cek isi photo", uploadFile.toString())
 
         if (uploadFile != null) {
-//            binding?.ivUserEditedView?.visibility = View.VISIBLE
-            binding.ivIconProfile.let {
+            binding?.ivIconProfileNew?.visibility = View.VISIBLE
+            binding.btnEditProfile.visibility = View.VISIBLE
+            binding.ivIconProfileNew.let {
                 Glide
                     .with(this)
                     .load(uploadFile)
@@ -206,15 +211,15 @@ class ProfileActivity :
                         when (it.status) {
                             ApiStatus.LOADING -> loadingDialog.show()
                             ApiStatus.SUCCESS -> {
-                                when(it.message){
-                                    "Logout" ->{
-                                        openActivity<LoginActivity>{
+                                when (it.message) {
+                                    "Logout" -> {
+                                        openActivity<LoginActivity> {
                                             finishAffinity()
                                         }
                                     }
                                 }
 
-                                    binding.root.snacked("Profile Edited")
+                                binding.root.snacked("Profile Edited")
                             }
                             ApiStatus.ERROR -> {
                                 disconnect(it)

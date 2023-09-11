@@ -32,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//TODO Filter Category belum buat fungsi di viewmodel
+//TODO Filter Category belum buat fungsi di view-model
 //PC
 //FILTER DILANJUTKAN
 @AndroidEntryPoint
@@ -43,7 +43,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
     private var dataDestination = ArrayList<Destination?>()
     private var dataCategory = ArrayList<Destination?>()
     private var dataProvince = ArrayList<Destination?>()
-    private var categoryId : Int? = null
+    private var categoryId: Int? = null
+    private var provinceId: Int? = null
+    private lateinit var buttonInsideDialog: Button
+
 
     private val adapterDestination by lazy {
         object :
@@ -151,6 +154,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 holder.binding.cardCategory.setOnClickListener {
                     tos("${item.name}")
                     tos("$position")
+                    provinceId = item.id
                     dataProvince.forEachIndexed { index, variant ->
                         variant?.selectedProvince = index == position
                     }
@@ -279,16 +283,19 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         }
     }
 
+    //List Destination
     private fun getDestinationList() {
         viewModel.getListDestination()
     }
 
+    //List Category
     private fun destinationCategory() {
-        viewModel.getListDestinationCategory()
+        viewModel.getListCategory()
     }
 
+    //List Province
     private fun destinationProvince() {
-        viewModel.getListDestinationProvince()
+        viewModel.getListProvince()
     }
 
     private fun showBottomSheetDialog() {
@@ -301,8 +308,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         val rvProvince = view.findViewById<RecyclerView>(R.id.rv_province)
         rvCategory.adapter = adapterCategory
         rvProvince.adapter = adapterProvince
+
+        Log.d("cek categoryId dialog", categoryId.toString())
         buttonInsideDialog.setOnClickListener {
+            //Get List Destination By Category
             categoryId?.let { it1 -> viewModel.getListDestinationByCategory(it1) }
+            provinceId?.let { it1 -> viewModel.getListDestinationByProvince(it1) }
             // Handle button click inside the bottom sheet dialog
             bottomSheetDialog.dismiss() // Close the dialog if needed
 
