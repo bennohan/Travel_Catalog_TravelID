@@ -41,6 +41,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
     @Inject
     lateinit var userDao: UserDao
     private var dataDestination = ArrayList<Destination?>()
+    private var dataDestinationByCategory = ArrayList<Destination?>()
+    private var dataDestinationByProvince = ArrayList<Destination?>()
     private var dataCategory = ArrayList<Destination?>()
     private var dataProvince = ArrayList<Destination?>()
     private var categoryId: Int? = null
@@ -175,7 +177,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         destinationProvince()
         observe()
         search()
-        Log.d("cek list dataDestination", dataDestination.toString())
 
         binding.ivIconProfile.setOnClickListener {
             openActivity<ProfileActivity>()
@@ -220,7 +221,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
 //                    binding!!.tvNoteNotFound.visibility = View.GONE
 //                }
             } else {
-                adapterCategory.submitList(dataDestination)
+                adapterDestination.submitList(dataDestination)
             }
         }
     }
@@ -248,14 +249,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 }
                 launch {
                     viewModel.listDestination.collect { destination ->
-                        adapterDestination.submitList(destination)
                         dataDestination.clear()
                         dataDestination.addAll(destination)
+                        adapterDestination.submitList(destination)
                     }
                 }
                 launch {
-                    viewModel.filterListDestination.collect { filterDestination ->
-                        adapterDestination.submitList(filterDestination)
+                    viewModel.filterListDestinationByCategory.collect { filterDestinationByCategory ->
+                        dataDestinationByCategory.clear()
+                        dataDestinationByCategory.addAll(filterDestinationByCategory)
+                        tos("category")
+//                        adapterDestination.submitList(dataDestinationByCategory + dataDestinationByProvince)
+                    }
+                }
+                launch {
+                    viewModel.filterListDestinationByProvince.collect { filterDestinationByProvince ->
+                        dataDestinationByProvince.clear()
+                        dataDestinationByProvince.addAll(filterDestinationByProvince)
+                        tos("province")
+//                        adapterDestination.submitList(dataDestinationByCategory + dataDestinationByProvince)
+//                        adapterDestination.submitList(filterDestinationByProvince)
                     }
                 }
                 launch {

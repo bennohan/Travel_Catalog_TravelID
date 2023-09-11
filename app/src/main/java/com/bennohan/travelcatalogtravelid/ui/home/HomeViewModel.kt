@@ -27,8 +27,11 @@ class HomeViewModel @Inject constructor(
     private var _listDestination = MutableSharedFlow<List<Destination?>>()
     var listDestination = _listDestination.asSharedFlow()
 
-    private var _filterListDestination = MutableSharedFlow<List<Destination?>>()
-    var filterListDestination = _filterListDestination.asSharedFlow()
+    private var _filterListDestinationByCatrgory= MutableSharedFlow<List<Destination?>>()
+    var filterListDestinationByCategory = _filterListDestinationByCatrgory.asSharedFlow()
+
+    private var _filterListDestinationByProvince = MutableSharedFlow<List<Destination?>>()
+    var filterListDestinationByProvince = _filterListDestinationByProvince.asSharedFlow()
 
     private var _listDestinationCategory = MutableSharedFlow<List<Destination?>>()
     var listDestinationCategory = _listDestinationCategory.asSharedFlow()
@@ -111,7 +114,7 @@ class HomeViewModel @Inject constructor(
             object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
-                    _filterListDestination.emit(data)
+                    _filterListDestinationByCatrgory.emit(data)
                     _apiResponse.emit(ApiResponse().responseSuccess())
 
                 }
@@ -133,7 +136,7 @@ class HomeViewModel @Inject constructor(
             object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
-                    _filterListDestination.emit(data)
+                    _filterListDestinationByProvince.emit(data)
                     _apiResponse.emit(ApiResponse().responseSuccess())
 
                 }
