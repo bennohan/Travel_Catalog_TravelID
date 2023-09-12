@@ -29,6 +29,11 @@ interface ApiService {
     suspend fun logout(
     ): String
 
+    //Logout
+    @POST("refresh-token")
+    suspend fun refreshToken(
+    ): String
+
     //Edit Profile
     @FormUrlEncoded
     @POST("user/edit-profile")
