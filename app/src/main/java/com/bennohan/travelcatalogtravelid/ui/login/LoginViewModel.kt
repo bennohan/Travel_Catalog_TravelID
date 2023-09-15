@@ -2,6 +2,7 @@ package com.bennohan.travelcatalogtravelid.ui.login
 
 import androidx.lifecycle.viewModelScope
 import com.bennohan.travelcatalogtravelid.api.ApiService
+import com.bennohan.travelcatalogtravelid.base.BaseObserver
 import com.bennohan.travelcatalogtravelid.base.BaseViewModel
 import com.bennohan.travelcatalogtravelid.database.User
 import com.bennohan.travelcatalogtravelid.database.UserDao
@@ -22,6 +23,7 @@ class LoginViewModel @Inject constructor(
     private val apiService: ApiService,
     private val session: CoreSession,
     private val gson: Gson,
+    private val observer: BaseObserver,
     private val userDao: UserDao
 ) :  BaseViewModel() {
 
@@ -31,25 +33,51 @@ class LoginViewModel @Inject constructor(
         password: String,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.login(phoneOrEmail, password) },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.login(phoneOrEmail, password) },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONObject(ApiCode.DATA).toObject<User>(gson)
                     val token = response.getString("access_token")
                     userDao.insert(data.copy(idRoom = 1))
                     session.setValue(Const.TOKEN.ACCESS_TOKEN,token)
                     _apiResponse.emit(ApiResponse().responseSuccess())
-
                 }
 
                 override suspend fun onError(response: ApiResponse) {
                     super.onError(response)
                     _apiResponse.emit(ApiResponse().responseError())
-
                 }
             })
     }
+
+
+
+//    fun login(
+//        phoneOrEmail: String,
+//        password: String,
+//    ) = viewModelScope.launch {
+//        _apiResponse.emit(ApiResponse().responseLoading())
+//        ApiObserver({ apiService.login(phoneOrEmail, password) },
+//            false,
+//            object : ApiObserver.ResponseListener {
+//                override suspend fun onSuccess(response: JSONObject) {
+//                    val data = response.getJSONObject(ApiCode.DATA).toObject<User>(gson)
+//                    val token = response.getString("access_token")
+//                    userDao.insert(data.copy(idRoom = 1))
+//                    session.setValue(Const.TOKEN.ACCESS_TOKEN,token)
+//                    _apiResponse.emit(ApiResponse().responseSuccess())
+//
+//                }
+//
+//                override suspend fun onError(response: ApiResponse) {
+//                    super.onError(response)
+//                    _apiResponse.emit(ApiResponse().responseError())
+//
+//                }
+//            })
+//    }
 
 
 }

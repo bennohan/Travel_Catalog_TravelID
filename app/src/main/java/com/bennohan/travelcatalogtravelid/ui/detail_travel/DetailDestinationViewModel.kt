@@ -2,6 +2,7 @@ package com.bennohan.travelcatalogtravelid.ui.detail_travel
 
 import androidx.lifecycle.viewModelScope
 import com.bennohan.travelcatalogtravelid.api.ApiService
+import com.bennohan.travelcatalogtravelid.base.BaseObserver
 import com.bennohan.travelcatalogtravelid.base.BaseViewModel
 import com.bennohan.travelcatalogtravelid.database.Destination
 import com.bennohan.travelcatalogtravelid.database.constant.Const
@@ -23,7 +24,8 @@ class DetailDestinationViewModel @Inject constructor(
     private val apiService: ApiService,
     private val session: CoreSession,
     private val gson: Gson,
-) :  BaseViewModel() {
+    private val observer: BaseObserver
+) : BaseViewModel() {
 
     private var _dataDestination = MutableSharedFlow<Destination?>()
     var dataDestination = _dataDestination.asSharedFlow()
@@ -36,12 +38,14 @@ class DetailDestinationViewModel @Inject constructor(
         id: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.destinationById(id) },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.destinationById(id) },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONObject(ApiCode.DATA).toObject<Destination>(gson)
-                    val image = response.getJSONObject(ApiCode.DATA).getJSONArray("photo").toString()
+                    val image =
+                        response.getJSONObject(ApiCode.DATA).getJSONArray("photo").toString()
                     _dataImage.emit(image)
                     _dataDestination.emit(data)
 
@@ -61,18 +65,41 @@ class DetailDestinationViewModel @Inject constructor(
         id: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.saveDestination(id) },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.saveDestination(id) },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val responseSave = response.getBoolean("saved")
-                    if (responseSave){
+                    if (responseSave) {
                         _apiResponse.emit(ApiResponse().responseSuccess("Saved"))
-                        session.setValue(Const.SAVED.SAVE_DESTINATION,true)
-                    }else{
+                        session.setValue(Const.SAVED.SAVE_DESTINATION, true)
+                    } else {
                         _apiResponse.emit(ApiResponse().responseSuccess("unSaved"))
-                        session.setValue(Const.SAVED.SAVE_DESTINATION,false)
+                        session.setValue(Const.SAVED.SAVE_DESTINATION, false)
                     }
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    super.onError(response)
+                    _apiResponse.emit(ApiResponse().responseError())
+
+                }
+            })
+    }
+
+    fun addReview(
+        rating: Int,
+        review_description : String,
+        id: Int,
+    ) = viewModelScope.launch {
+        _apiResponse.emit(ApiResponse().responseLoading())
+        observer(
+            block = { apiService.addReview(rating,review_description,id) },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                        _apiResponse.emit(ApiResponse().responseSuccess("Review Added"))
                 }
 
                 override suspend fun onError(response: ApiResponse) {

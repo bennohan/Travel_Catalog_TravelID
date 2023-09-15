@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.bennohan.travelcatalogtravelid.R
 import com.bennohan.travelcatalogtravelid.base.BaseActivity
 import com.bennohan.travelcatalogtravelid.database.constant.Const
@@ -22,6 +24,7 @@ import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.google.android.datatransport.runtime.Destination
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -34,11 +37,7 @@ class DetailDestinationActivity :
     private  var destinationId: Int? = null
 
     private var destination : com.bennohan.travelcatalogtravelid.database.Destination? = null
-
-
     lateinit var sharedPreferences: SharedPreferences
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +51,6 @@ class DetailDestinationActivity :
         binding.btnBack.setOnClickListener {
             finish()
         }
-
 
         binding.btnDestinationSave.setOnClickListener {
             savedDestination()
@@ -189,6 +187,26 @@ class DetailDestinationActivity :
             }
         }
     }
+
+    private fun showBottomSheetDialog() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.fragment_bottom_review_sheet, null)
+
+        // Find and set up UI components inside the bottom sheet layout
+        val btnSubmitReview = view.findViewById<Button>(R.id.btn_submit_review)
+
+        btnSubmitReview.setOnClickListener {
+            //Get List Destination By Category
+            // Handle button click inside the bottom sheet dialog
+//            viewModel.addReview()
+            bottomSheetDialog.dismiss() // Close the dialog if needed
+
+        }
+
+        bottomSheetDialog.setContentView(view)
+        bottomSheetDialog.show()
+    }
+
 
 
 }

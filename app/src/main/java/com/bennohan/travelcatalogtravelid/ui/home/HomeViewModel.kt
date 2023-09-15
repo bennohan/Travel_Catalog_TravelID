@@ -2,6 +2,7 @@ package com.bennohan.travelcatalogtravelid.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.bennohan.travelcatalogtravelid.api.ApiService
+import com.bennohan.travelcatalogtravelid.base.BaseObserver
 import com.bennohan.travelcatalogtravelid.base.BaseViewModel
 import com.bennohan.travelcatalogtravelid.database.Destination
 import com.crocodic.core.api.ApiCode
@@ -22,6 +23,7 @@ class HomeViewModel @Inject constructor(
     private val apiService: ApiService,
     private val session: CoreSession,
     private val gson: Gson,
+    private val observer: BaseObserver,
     ) :  BaseViewModel() {
 
     private var _listDestination = MutableSharedFlow<List<Destination?>>()
@@ -44,9 +46,10 @@ class HomeViewModel @Inject constructor(
     fun getListDestination(
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.destinationList() },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.destinationList() },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestination.emit(data)
@@ -109,9 +112,10 @@ class HomeViewModel @Inject constructor(
         idCategory: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.getDestinationByCategory(idCategory) },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.getDestinationByCategory(idCategory) },
+            toast =false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _filterListDestinationByCatrgory.emit(data)
@@ -131,9 +135,10 @@ class HomeViewModel @Inject constructor(
         idCategory: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.getDestinationByProvince(idCategory) },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+        block = { apiService.getDestinationByProvince(idCategory) },
+        toast =  false,
+        responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _filterListDestinationByProvince.emit(data)

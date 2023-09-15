@@ -46,13 +46,13 @@ interface ApiService {
     @POST("user/edit-profile")
     suspend fun editProfilePhoto(
         @Field("name") name: String?,
-        @Part photoProfile : MultipartBody.Part?
+        @Part photoProfile: MultipartBody.Part?
     ): String
 
     @Multipart
     @GET("destination/filter-by-category/{id}")
     suspend fun filterCategory(
-        @Path("id") id : Int
+        @Path("id") id: Int
     ): String
 
 
@@ -70,18 +70,18 @@ interface ApiService {
     //GET DESTINATION BY ID
     @GET("destination/{id}/detail")
     suspend fun destinationById(
-        @Path("id") id : Int
+        @Path("id") id: Int
     ): String
 
     //GET DESTINATION BY Category
     @GET("destination/filter-by-category/{id}")
     suspend fun getDestinationByCategory(
-        @Path("id") idCategory : Int
+        @Path("id") idCategory: Int
     ): String
 
     @GET("destination/filter-by-province/{id}")
     suspend fun getDestinationByProvince(
-        @Path("id") idCategory : Int
+        @Path("id") idCategory: Int
     ): String
 
 
@@ -90,9 +90,19 @@ interface ApiService {
     @FormUrlEncoded
     @POST("user/save-destination")
     suspend fun saveDestination(
-        @Field("destination_id") id : Int
+        @Field("destination_id") id: Int
     ): String
 
+
+    //REVIEW
+    //ADD_REVIEW
+    @FormUrlEncoded
+    @POST("review/add")
+    suspend fun addReview(
+        @Field("rating") rating: Int,
+        @Field("review_description") review_description : String,
+        @Field("destination_id") id : Int
+    ): String
 
 
 }
