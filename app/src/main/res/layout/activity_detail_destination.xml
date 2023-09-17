@@ -214,7 +214,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_destination_price" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/appCompatButton"
+                android:id="@+id/btn_addReview"
                 android:layout_width="170dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

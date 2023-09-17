@@ -8,6 +8,8 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.RatingBar
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,6 +21,7 @@ import com.bennohan.travelcatalogtravelid.databinding.ActivityDetailDestinationB
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.crocodic.core.api.ApiStatus
+import com.crocodic.core.extension.textOf
 import com.crocodic.core.extension.tos
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
@@ -28,6 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+//TODO ADD REVIEW
 @AndroidEntryPoint
 class DetailDestinationActivity :
     BaseActivity<ActivityDetailDestinationBinding, DetailDestinationViewModel>(R.layout.activity_detail_destination) {
@@ -47,6 +51,14 @@ class DetailDestinationActivity :
         getDestinationById()
         observe()
         resultCondition()
+
+        binding.btnAddReview.setOnClickListener {
+            showBottomSheetDialogAddReview()
+        }
+
+        binding.rbDestinationRating.setOnClickListener {
+            tos("clickAble")
+        }
 
         binding.btnBack.setOnClickListener {
             finish()
@@ -188,14 +200,24 @@ class DetailDestinationActivity :
         }
     }
 
-    private fun showBottomSheetDialog() {
+    private fun showBottomSheetDialogAddReview() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.fragment_bottom_review_sheet, null)
 
         // Find and set up UI components inside the bottom sheet layout
         val btnSubmitReview = view.findViewById<Button>(R.id.btn_submit_review)
+        val etAddReview = view.findViewById<EditText>(R.id.btn_submit_review)
+        val rbDestinationRating = view.findViewById<RatingBar>(R.id.rb_destination_rating)
+        val reviewDescription = etAddReview.textOf()
+
+
+        rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
+            // Update the TextView with the selected rating as an integer
+            tos("Rating: ${rating.toInt()}")
+        }
 
         btnSubmitReview.setOnClickListener {
+//            viewModel.addReview()
             //Get List Destination By Category
             // Handle button click inside the bottom sheet dialog
 //            viewModel.addReview()

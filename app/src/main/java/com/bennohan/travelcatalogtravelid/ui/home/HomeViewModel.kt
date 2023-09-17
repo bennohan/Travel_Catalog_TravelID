@@ -5,11 +5,13 @@ import com.bennohan.travelcatalogtravelid.api.ApiService
 import com.bennohan.travelcatalogtravelid.base.BaseObserver
 import com.bennohan.travelcatalogtravelid.base.BaseViewModel
 import com.bennohan.travelcatalogtravelid.database.Destination
+import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.crocodic.core.api.ApiCode
 import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.toList
+import com.crocodic.core.helper.log.Log
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -53,12 +55,14 @@ class HomeViewModel @Inject constructor(
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestination.emit(data)
+                    android.util.Log.d("cek api token",Const.TOKEN.ACCESS_TOKEN)
                     _apiResponse.emit(ApiResponse().responseSuccess())
 
                 }
 
                 override suspend fun onError(response: ApiResponse) {
                     super.onError(response)
+                    android.util.Log.d("cek api token",Const.TOKEN.ACCESS_TOKEN)
                     _apiResponse.emit(ApiResponse().responseError())
 
                 }
