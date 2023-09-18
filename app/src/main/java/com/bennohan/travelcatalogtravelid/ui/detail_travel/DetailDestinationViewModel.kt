@@ -11,6 +11,7 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.toObject
+import com.crocodic.core.helper.log.Log
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,6 +33,9 @@ class DetailDestinationViewModel @Inject constructor(
 
     private var _dataImage = MutableSharedFlow<String>()
     var dataImage = _dataImage.asSharedFlow()
+
+    private var _dataReviewList = MutableSharedFlow<Destination?>()
+    var dataReviewList = _dataReviewList.asSharedFlow()
 
     //List Destination Function
     fun getDestinationById(
@@ -109,5 +113,29 @@ class DetailDestinationViewModel @Inject constructor(
                 }
             })
     }
+
+    fun getDestinationReviewList() = viewModelScope.launch {
+        _apiResponse.emit(ApiResponse().responseLoading())
+        observer(
+            block = { apiService.getDestinationReviewList() },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    val data = response.getJSONObject(ApiCode.DATA).toObject<Destination>(gson)
+                    val ratting = response.getJSONObject(ApiCode.DATA).getString("rating").toString()
+                    android.util.Log.d("cek hasil ratting",ratting)
+                    _dataDestination.emit(data)
+                    _apiResponse.emit(ApiResponse().responseSuccess())
+
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    super.onError(response)
+                    _apiResponse.emit(ApiResponse().responseError())
+
+                }
+            })
+    }
+
 
 }

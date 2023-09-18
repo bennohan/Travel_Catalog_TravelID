@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RatingBar
+import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -18,9 +19,13 @@ import com.bennohan.travelcatalogtravelid.R
 import com.bennohan.travelcatalogtravelid.base.BaseActivity
 import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.bennohan.travelcatalogtravelid.databinding.ActivityDetailDestinationBinding
+import com.bennohan.travelcatalogtravelid.databinding.ItemDestinationBinding
+import com.bennohan.travelcatalogtravelid.databinding.ItemReviewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.crocodic.core.api.ApiStatus
+import com.crocodic.core.base.adapter.ReactiveListAdapter
+import com.crocodic.core.extension.openActivity
 import com.crocodic.core.extension.textOf
 import com.crocodic.core.extension.tos
 import com.denzcoskun.imageslider.ImageSlider
@@ -42,6 +47,36 @@ class DetailDestinationActivity :
 
     private var destination : com.bennohan.travelcatalogtravelid.database.Destination? = null
     lateinit var sharedPreferences: SharedPreferences
+
+    private val adapterDestinationReview by lazy {
+        object :
+            ReactiveListAdapter<ItemReviewBinding, com.bennohan.travelcatalogtravelid.database.Destination>(R.layout.item_review) {
+            override fun onBindViewHolder(
+                holder: ItemViewHolder<ItemReviewBinding, com.bennohan.travelcatalogtravelid.database.Destination>,
+                position: Int
+            ) {
+                super.onBindViewHolder(holder, position)
+                val item = getItem(position)
+
+                item?.let { itm ->
+                    holder.binding.data = itm
+                    holder.bind(itm)
+                }
+
+                val floatValue = if (item?.rating?.isNotEmpty() == true) {
+                    item.rating.replace(",", ".").toFloat()
+                } else {
+                    0.0f // or any default value you want to set
+                }
+
+
+                holder.binding.rbDestinationRating.rating = floatValue
+
+
+            }
+
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -195,6 +230,11 @@ class DetailDestinationActivity :
 
                     }
                 }
+                launch {
+                    viewModel.dataReviewList.collect {
+                        Log.d("cek dataReview", it.toString())
+                    }
+                }
 
             }
         }
@@ -206,15 +246,56 @@ class DetailDestinationActivity :
 
         // Find and set up UI components inside the bottom sheet layout
         val btnSubmitReview = view.findViewById<Button>(R.id.btn_submit_review)
-        val etAddReview = view.findViewById<EditText>(R.id.btn_submit_review)
+        val etAddReview = view.findViewById<EditText>(R.id.et_addReview)
+        val tvCategory = view.findViewById<TextView>(R.id.tv_category)
         val rbDestinationRating = view.findViewById<RatingBar>(R.id.rb_destination_rating)
-        val reviewDescription = etAddReview.textOf()
+        val reviewDescription = etAddReview.getText()
 
 
-        rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
-            // Update the TextView with the selected rating as an integer
-            tos("Rating: ${rating.toInt()}")
+        tvCategory.setOnClickListener {
+            Log.d("cek isi", reviewDescription.toString())
+            tos("{$reviewDescription}")
         }
+
+//        rbDestinationRating.setOnClickListener {
+//            tos("clickAble")
+//        }
+
+        var ratingUser : String? = null
+
+
+            rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
+                // Update the TextView with the selected rating as an integer
+                tos("Rating: ${rating.toInt()}")
+                Log.d("Rating","Rating: ${rating.toInt()}")
+                ratingUser = rating.toString()
+            }
+
+
+
+
+        btnSubmitReview.setOnClickListener {
+            Log.d("RatingUser","Rating: ${ratingUser}")
+//            viewModel.addReview()
+            //Get List Destination By Category
+            // Handle button click inside the bottom sheet dialog
+//            viewModel.addReview()
+            bottomSheetDialog.dismiss() // Close the dialog if needed
+
+        }
+
+        bottomSheetDialog.setContentView(view)
+        bottomSheetDialog.show()
+    }
+
+    private fun showBottomSheetDialogGetReview() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.fragment_bottom_review_list_sheet, null)
+
+        // Find and set up UI components inside the bottom sheet layout
+        val btnSubmitReview = view.findViewById<RecyclerView>(R.id.rv_review)
+
+
 
         btnSubmitReview.setOnClickListener {
 //            viewModel.addReview()

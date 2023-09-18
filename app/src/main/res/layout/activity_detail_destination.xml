@@ -46,18 +46,41 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_destination_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linear_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_margin="20dp"
-            android:text='@{destination.name}'
-            android:textColor="@color/black"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_destination"
-            tools:text="Destination Name" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_destination">
+
+            <TextView
+                android:id="@+id/tv_destination_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{destination.name}'
+                android:textColor="@color/black"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_destination"
+                tools:text="Destination Name" />
+
+
+        </LinearLayout>
+
+<!--        <TextView-->
+<!--            android:id="@+id/tv_destination_name"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="20dp"-->
+<!--            android:text='@{destination.name}'-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="25dp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/iv_destination"-->
+<!--            tools:text="Destination Name" />-->
 
         <ImageButton
             android:id="@+id/btn_destination_save"
@@ -75,7 +98,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/tv_destination_name">
+            app:layout_constraintTop_toBottomOf="@id/linear_layout">
 
 
             <RatingBar
@@ -84,11 +107,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:numStars="5"
+                android:clickable="true"
                 android:progressTint="#FFCC01"
                 android:scaleX="0.80"
                 android:scaleY="0.80"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_destination_name" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_destination_name"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/tv_destination_category"
@@ -158,17 +183,17 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_description"
             tools:text="Lawang Sewu adalah gedung bersejarah milik PT Kereta Api Indonesia (Persero) yang awalnya digunakan sebagai Kantor Pusat perusahaan kereta api swasta Nederlandsch-Indische Spoorweg Maatschappij (NISM)." />
 
-        <TextView
-            android:id="@+id/tv_mapView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:text="Mapview"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@+id/tv_destination_description" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_mapView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:text="Mapview"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="20sp"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_destination_description" />-->
 
 
 

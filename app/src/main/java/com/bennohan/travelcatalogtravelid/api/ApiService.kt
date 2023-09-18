@@ -104,5 +104,10 @@ interface ApiService {
         @Field("destination_id") id : Int
     ): String
 
+    //GET USER REVIEW LIST
+    @GET("user/user-review")
+    suspend fun getDestinationReviewList(
+    ): String
+
 
 }
