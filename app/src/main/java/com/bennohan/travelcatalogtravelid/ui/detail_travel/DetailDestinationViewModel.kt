@@ -10,6 +10,7 @@ import com.crocodic.core.api.ApiCode
 import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.data.CoreSession
+import com.crocodic.core.extension.toList
 import com.crocodic.core.extension.toObject
 import com.crocodic.core.helper.log.Log
 import com.google.gson.Gson
@@ -34,7 +35,7 @@ class DetailDestinationViewModel @Inject constructor(
     private var _dataImage = MutableSharedFlow<String>()
     var dataImage = _dataImage.asSharedFlow()
 
-    private var _dataReviewList = MutableSharedFlow<Destination?>()
+    private var _dataReviewList = MutableSharedFlow<List<Destination?>>()
     var dataReviewList = _dataReviewList.asSharedFlow()
 
     //List Destination Function
@@ -121,10 +122,10 @@ class DetailDestinationViewModel @Inject constructor(
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
-                    val data = response.getJSONObject(ApiCode.DATA).toObject<Destination>(gson)
+                    val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     val ratting = response.getJSONObject(ApiCode.DATA).getString("rating").toString()
                     android.util.Log.d("cek hasil ratting",ratting)
-                    _dataDestination.emit(data)
+                    _dataReviewList.emit(data)
                     _apiResponse.emit(ApiResponse().responseSuccess())
 
                 }

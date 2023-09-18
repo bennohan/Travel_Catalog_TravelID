@@ -46,7 +46,7 @@ class DetailDestinationActivity :
     private  var destinationId: Int? = null
 
     private var destination : com.bennohan.travelcatalogtravelid.database.Destination? = null
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
 
     private val adapterDestinationReview by lazy {
         object :
@@ -91,6 +91,10 @@ class DetailDestinationActivity :
             showBottomSheetDialogAddReview()
         }
 
+        binding.tvDestinationCategory.setOnClickListener {
+            viewModel.getDestinationReviewList()
+        }
+
         binding.rbDestinationRating.setOnClickListener {
             tos("clickAble")
         }
@@ -129,7 +133,7 @@ class DetailDestinationActivity :
         Log.d("cekId", destinationId.toString())
     }
 
-    fun setBooleanResult(value: Boolean) {
+    private fun setBooleanResult(value: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("result", value)
         editor.apply()
@@ -176,6 +180,9 @@ class DetailDestinationActivity :
                                         setBooleanResult(false).apply {
                                             binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_border_24)
                                         }
+                                    }
+                                    "Review Added" -> {
+                                        tos("Review Added")
                                     }
                                 }
                             }
@@ -232,6 +239,7 @@ class DetailDestinationActivity :
                 }
                 launch {
                     viewModel.dataReviewList.collect {
+                        adapterDestinationReview.submitList(it)
                         Log.d("cek dataReview", it.toString())
                     }
                 }
@@ -249,7 +257,7 @@ class DetailDestinationActivity :
         val etAddReview = view.findViewById<EditText>(R.id.et_addReview)
         val tvCategory = view.findViewById<TextView>(R.id.tv_category)
         val rbDestinationRating = view.findViewById<RatingBar>(R.id.rb_destination_rating)
-        val reviewDescription = etAddReview.getText()
+        val reviewDescription = etAddReview.text
 
 
         tvCategory.setOnClickListener {
@@ -261,25 +269,24 @@ class DetailDestinationActivity :
 //            tos("clickAble")
 //        }
 
-        var ratingUser : String? = null
+        var ratingUser : Int? = null
 
 
             rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
                 // Update the TextView with the selected rating as an integer
                 tos("Rating: ${rating.toInt()}")
-                Log.d("Rating","Rating: ${rating.toInt()}")
-                ratingUser = rating.toString()
+                ratingUser = rating.toInt()
             }
 
 
-
-
         btnSubmitReview.setOnClickListener {
-            Log.d("RatingUser","Rating: ${ratingUser}")
-//            viewModel.addReview()
-            //Get List Destination By Category
-            // Handle button click inside the bottom sheet dialog
-//            viewModel.addReview()
+            Log.d("RatingUser","Rating: $ratingUser")
+            Log.d("destinationId","ID: $destinationId")
+            ratingUser?.let { it1 -> destinationId?.let { it2 ->
+                viewModel.addReview(it1,reviewDescription.toString(),
+                    it2
+                )
+            } }
             bottomSheetDialog.dismiss() // Close the dialog if needed
 
         }
@@ -293,18 +300,9 @@ class DetailDestinationActivity :
         val view = layoutInflater.inflate(R.layout.fragment_bottom_review_list_sheet, null)
 
         // Find and set up UI components inside the bottom sheet layout
-        val btnSubmitReview = view.findViewById<RecyclerView>(R.id.rv_review)
+        val rvReview = view.findViewById<RecyclerView>(R.id.rv_review)
+        rvReview.adapter = adapterDestinationReview
 
-
-
-        btnSubmitReview.setOnClickListener {
-//            viewModel.addReview()
-            //Get List Destination By Category
-            // Handle button click inside the bottom sheet dialog
-//            viewModel.addReview()
-            bottomSheetDialog.dismiss() // Close the dialog if needed
-
-        }
 
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
