@@ -5,6 +5,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         app:cardCornerRadius="10dp"
+        android:background="@drawable/bottom_sheet_dialog_background"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout

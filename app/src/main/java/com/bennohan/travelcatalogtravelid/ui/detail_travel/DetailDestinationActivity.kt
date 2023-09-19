@@ -19,19 +19,12 @@ import com.bennohan.travelcatalogtravelid.R
 import com.bennohan.travelcatalogtravelid.base.BaseActivity
 import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.bennohan.travelcatalogtravelid.databinding.ActivityDetailDestinationBinding
-import com.bennohan.travelcatalogtravelid.databinding.ItemDestinationBinding
 import com.bennohan.travelcatalogtravelid.databinding.ItemReviewBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.base.adapter.ReactiveListAdapter
-import com.crocodic.core.extension.openActivity
-import com.crocodic.core.extension.textOf
 import com.crocodic.core.extension.tos
 import com.denzcoskun.imageslider.ImageSlider
-import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
-import com.google.android.datatransport.runtime.Destination
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,16 +34,16 @@ import kotlinx.coroutines.launch
 class DetailDestinationActivity :
     BaseActivity<ActivityDetailDestinationBinding, DetailDestinationViewModel>(R.layout.activity_detail_destination) {
 
-    private lateinit var ratingww: String
     private lateinit var destinationName: String
-    private  var destinationId: Int? = null
+    private var destinationId: Int? = null
 
-    private var destination : com.bennohan.travelcatalogtravelid.database.Destination? = null
     private lateinit var sharedPreferences: SharedPreferences
 
     private val adapterDestinationReview by lazy {
         object :
-            ReactiveListAdapter<ItemReviewBinding, com.bennohan.travelcatalogtravelid.database.Destination>(R.layout.item_review) {
+            ReactiveListAdapter<ItemReviewBinding, com.bennohan.travelcatalogtravelid.database.Destination>(
+                R.layout.item_review
+            ) {
             override fun onBindViewHolder(
                 holder: ItemViewHolder<ItemReviewBinding, com.bennohan.travelcatalogtravelid.database.Destination>,
                 position: Int
@@ -84,12 +77,14 @@ class DetailDestinationActivity :
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         getDestinationById()
+        showBottomSheetDialogGetReview()
         observe()
         resultCondition()
 
         binding.btnAddReview.setOnClickListener {
             showBottomSheetDialogAddReview()
         }
+
 
         binding.tvDestinationCategory.setOnClickListener {
             viewModel.getDestinationReviewList()
@@ -117,11 +112,11 @@ class DetailDestinationActivity :
     private fun resultCondition() {
         when (sharedPreferences.getBoolean("result", false)) {
             true -> {
-                // Kode yang akan dijalankan jika result bernilai true
+                // Code will Run If   result  true
                 binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_24)
             }
             false -> {
-                // Kode yang akan dijalankan jika result bernilai false
+                // Code will Run If   result  False
                 binding.btnDestinationSave.setImageResource(R.drawable.ic_baseline_bookmark_border_24)
             }
 
@@ -130,7 +125,6 @@ class DetailDestinationActivity :
 
     private fun savedDestination() {
         destinationId?.let { viewModel.saveDestination(it) }
-        Log.d("cekId", destinationId.toString())
     }
 
     private fun setBooleanResult(value: Boolean) {
@@ -148,13 +142,10 @@ class DetailDestinationActivity :
 
     private fun sendLocationIntent() {
         val intentUri = Uri.parse("google.navigation:q=${destinationName}&mode=d")
-        Log.d("cek destination name",destinationName)
         val mapIntent = Intent(Intent.ACTION_VIEW, intentUri)
         mapIntent.setPackage("com.google.android.apps.maps")
         startActivity(mapIntent)
     }
-
-
 
 
     private fun observe() {
@@ -165,7 +156,7 @@ class DetailDestinationActivity :
                         when (it.status) {
                             ApiStatus.LOADING -> loadingDialog.show()
                             ApiStatus.SUCCESS -> {
-                                when(it.message){
+                                when (it.message) {
                                     "Saved" -> {
                                         tos("Saved")
                                         loadingDialog.dismiss()
@@ -183,6 +174,11 @@ class DetailDestinationActivity :
                                     }
                                     "Review Added" -> {
                                         tos("Review Added")
+                                        showBottomSheetDialogGetReview()
+
+                                    }
+                                    "Get Destination Review Success" -> {
+                                        loadingDialog.dismiss()
                                     }
                                 }
                             }
@@ -201,8 +197,6 @@ class DetailDestinationActivity :
                         Log.d("cek dataDestination", it.toString())
                         binding.destination = it
                         destinationName = it?.name.toString()
-                        ratingww = it?.rating.toString()
-                        ratingww.let { it1 -> Log.d("cek get rating Id", it1) }
 
 
                         val floatValue = if (it?.rating?.isNotEmpty() == true) {
@@ -219,9 +213,9 @@ class DetailDestinationActivity :
                             emptyList()
                         }
 
-                        if (imageList.isNullOrEmpty()){
+                        if (imageList.isEmpty()) {
                             binding.ivDestinationPlaceholder.visibility = View.VISIBLE
-                        }else{
+                        } else {
                             val imageSlider = findViewById<ImageSlider>(R.id.iv_destination)
 
 
@@ -232,7 +226,7 @@ class DetailDestinationActivity :
                             }
 
                             imageSlider.setImageList(imageUrls)
-                            Log.d("cek dataImageUrls",imageUrls.toString())
+                            Log.d("cek dataImageUrls", imageUrls.toString())
                         }
 
                     }
@@ -251,6 +245,7 @@ class DetailDestinationActivity :
     private fun showBottomSheetDialogAddReview() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.fragment_bottom_review_sheet, null)
+        var ratingUser: Int? = null
 
         // Find and set up UI components inside the bottom sheet layout
         val btnSubmitReview = view.findViewById<Button>(R.id.btn_submit_review)
@@ -269,24 +264,24 @@ class DetailDestinationActivity :
 //            tos("clickAble")
 //        }
 
-        var ratingUser : Int? = null
-
-
-            rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
-                // Update the TextView with the selected rating as an integer
-                tos("Rating: ${rating.toInt()}")
-                ratingUser = rating.toInt()
-            }
+        rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
+            // Update the TextView with the selected rating as an integer
+            tos("Rating: ${rating.toInt()}")
+            ratingUser = rating.toInt()
+        }
 
 
         btnSubmitReview.setOnClickListener {
-            Log.d("RatingUser","Rating: $ratingUser")
-            Log.d("destinationId","ID: $destinationId")
-            ratingUser?.let { it1 -> destinationId?.let { it2 ->
-                viewModel.addReview(it1,reviewDescription.toString(),
-                    it2
-                )
-            } }
+            Log.d("RatingUser", "Rating: $ratingUser")
+            Log.d("destinationId", "ID: $destinationId")
+            ratingUser?.let { it1 ->
+                destinationId?.let { it2 ->
+                    viewModel.addReview(
+                        it1, reviewDescription.toString(),
+                        it2
+                    )
+                }
+            }
             bottomSheetDialog.dismiss() // Close the dialog if needed
 
         }
@@ -307,7 +302,6 @@ class DetailDestinationActivity :
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
     }
-
 
 
 }

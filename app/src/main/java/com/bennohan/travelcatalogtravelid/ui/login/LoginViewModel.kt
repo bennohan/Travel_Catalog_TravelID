@@ -33,10 +33,8 @@ class LoginViewModel @Inject constructor(
         password: String,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        observer(
-            block = { apiService.login(phoneOrEmail, password) },
-            toast = false,
-            responseListener = object : ApiObserver.ResponseListener {
+        ApiObserver({ apiService.login(phoneOrEmail, password) }, false,
+            object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONObject(ApiCode.DATA).toObject<User>(gson)
                     val token = response.getString("access_token")
@@ -78,6 +76,6 @@ class LoginViewModel @Inject constructor(
 //                }
 //            })
 //    }
-
+//
 
 }

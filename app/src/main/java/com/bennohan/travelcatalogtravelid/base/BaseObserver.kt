@@ -26,7 +26,7 @@ class BaseObserver @Inject constructor(
             }
 
             override suspend fun onError(response: ApiResponse) {
-//                responseListener.onError(response)
+                responseListener.onError(response)
                 ApiObserver(
                     {apiService.refreshToken()},
                     responseListener = object : ApiObserver.ResponseListener{
@@ -49,3 +49,4 @@ class BaseObserver @Inject constructor(
         })
     }
 }
+

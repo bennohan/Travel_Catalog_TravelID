@@ -48,10 +48,7 @@ class HomeViewModel @Inject constructor(
     fun getListDestination(
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        observer(
-            block = { apiService.destinationList() },
-            toast = false,
-            responseListener = object : ApiObserver.ResponseListener {
+        ApiObserver({ apiService.destinationList() }, false, object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestination.emit(data)
@@ -116,10 +113,7 @@ class HomeViewModel @Inject constructor(
         idCategory: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        observer(
-            block = { apiService.getDestinationByCategory(idCategory) },
-            toast =false,
-            responseListener = object : ApiObserver.ResponseListener {
+        ApiObserver({ apiService.getDestinationByCategory(idCategory) }, false, object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _filterListDestinationByCatrgory.emit(data)
@@ -139,10 +133,7 @@ class HomeViewModel @Inject constructor(
         idCategory: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        observer(
-        block = { apiService.getDestinationByProvince(idCategory) },
-        toast =  false,
-        responseListener = object : ApiObserver.ResponseListener {
+        ApiObserver({ apiService.getDestinationByProvince(idCategory) }, false, object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _filterListDestinationByProvince.emit(data)
