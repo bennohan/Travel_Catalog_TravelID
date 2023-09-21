@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -77,7 +76,7 @@ class DetailDestinationActivity :
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         getDestinationById()
-        showBottomSheetDialogGetReview()
+        viewModel.getDestinationReviewList()
         observe()
         resultCondition()
 
@@ -85,9 +84,8 @@ class DetailDestinationActivity :
             showBottomSheetDialogAddReview()
         }
 
-
-        binding.tvDestinationCategory.setOnClickListener {
-            viewModel.getDestinationReviewList()
+        binding.btnAllReview.setOnClickListener {
+            showBottomSheetDialogGetReview()
         }
 
         binding.rbDestinationRating.setOnClickListener {
@@ -194,7 +192,6 @@ class DetailDestinationActivity :
                 }
                 launch {
                     viewModel.dataDestination.collect {
-                        Log.d("cek dataDestination", it.toString())
                         binding.destination = it
                         destinationName = it?.name.toString()
 
@@ -226,7 +223,6 @@ class DetailDestinationActivity :
                             }
 
                             imageSlider.setImageList(imageUrls)
-                            Log.d("cek dataImageUrls", imageUrls.toString())
                         }
 
                     }
@@ -234,7 +230,6 @@ class DetailDestinationActivity :
                 launch {
                     viewModel.dataReviewList.collect {
                         adapterDestinationReview.submitList(it)
-                        Log.d("cek dataReview", it.toString())
                     }
                 }
 
@@ -256,13 +251,9 @@ class DetailDestinationActivity :
 
 
         tvCategory.setOnClickListener {
-            Log.d("cek isi", reviewDescription.toString())
             tos("{$reviewDescription}")
         }
 
-//        rbDestinationRating.setOnClickListener {
-//            tos("clickAble")
-//        }
 
         rbDestinationRating.setOnRatingBarChangeListener { _, rating, _ ->
             // Update the TextView with the selected rating as an integer
@@ -272,8 +263,6 @@ class DetailDestinationActivity :
 
 
         btnSubmitReview.setOnClickListener {
-            Log.d("RatingUser", "Rating: $ratingUser")
-            Log.d("destinationId", "ID: $destinationId")
             ratingUser?.let { it1 ->
                 destinationId?.let { it2 ->
                     viewModel.addReview(

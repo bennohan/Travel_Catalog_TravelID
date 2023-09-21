@@ -3,6 +3,7 @@ package com.bennohan.travelcatalogtravelid.ui.splash
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.bennohan.travelcatalogtravelid.R
 import com.bennohan.travelcatalogtravelid.database.UserDao
@@ -32,6 +33,8 @@ class MainActivity : NoViewModelActivity<ActivityMainBinding>(R.layout.activity_
                 val user = userDao.isLogin()
                 android.util.Log.d("cek is login", user.toString())
                 if (!user) {
+                    binding.layoutUiCondition.visibility = View.VISIBLE
+                    binding.layoutUiSplash.visibility = View.GONE
                     binding.btnLogin.setOnClickListener {
                         openActivity<LoginActivity> {
                             finish()
@@ -43,7 +46,9 @@ class MainActivity : NoViewModelActivity<ActivityMainBinding>(R.layout.activity_
                         }
                     }
                 } else {
-                openActivity<HomeActivity> {
+                    binding.layoutUiCondition.visibility = View.GONE
+                    binding.layoutUiSplash.visibility = View.VISIBLE
+                    openActivity<HomeActivity> {
                     finish()
                 }
                 }
