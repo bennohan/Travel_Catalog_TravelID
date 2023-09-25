@@ -48,7 +48,10 @@ class HomeViewModel @Inject constructor(
     fun getListDestination(
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.destinationList() }, false, object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.destinationList() },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestination.emit(data)
@@ -70,9 +73,10 @@ class HomeViewModel @Inject constructor(
     fun getListCategory(
         ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.destinationCategory() },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.destinationCategory() },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestinationCategory.emit(data)
@@ -91,9 +95,10 @@ class HomeViewModel @Inject constructor(
     fun getListProvince(
         ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.destinationProvince() },
-            false,
-            object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.destinationProvince() },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _listDestinationProvince.emit(data)
@@ -113,7 +118,10 @@ class HomeViewModel @Inject constructor(
         idCategory: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.getDestinationByCategory(idCategory) }, false, object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.getDestinationByCategory(idCategory) },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _filterListDestinationByCatrgory.emit(data)
@@ -133,7 +141,10 @@ class HomeViewModel @Inject constructor(
         idCategory: Int,
     ) = viewModelScope.launch {
         _apiResponse.emit(ApiResponse().responseLoading())
-        ApiObserver({ apiService.getDestinationByProvince(idCategory) }, false, object : ApiObserver.ResponseListener {
+        observer(
+            block = { apiService.getDestinationByProvince(idCategory) },
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray(ApiCode.DATA).toList<Destination>(gson)
                     _filterListDestinationByProvince.emit(data)

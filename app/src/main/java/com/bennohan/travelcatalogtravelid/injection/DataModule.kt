@@ -2,6 +2,7 @@ package com.bennohan.travelcatalogtravelid.injection
 
 import android.content.Context
 import com.bennohan.travelcatalogtravelid.api.ApiService
+import com.bennohan.travelcatalogtravelid.base.BaseObserver
 import com.bennohan.travelcatalogtravelid.database.AppDatabase
 import com.bennohan.travelcatalogtravelid.database.constant.Const
 import com.crocodic.core.BuildConfig
@@ -39,6 +40,10 @@ class DataModule {
     @Singleton
     @Provides
     fun provideGson() = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES).create()
+
+    @Provides
+    fun provideBaseObserver(apiService: ApiService,session: CoreSession): BaseObserver = BaseObserver(apiService,session)
+
 
     @Singleton
     @Provides
