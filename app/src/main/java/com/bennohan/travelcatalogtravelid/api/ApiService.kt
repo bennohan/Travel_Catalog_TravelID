@@ -41,11 +41,10 @@ interface ApiService {
         @Field("name") name: String?,
     ): String
 
-    @FormUrlEncoded
     @Multipart
     @POST("user/edit-profile")
     suspend fun editProfilePhoto(
-        @Field("name") name: String?,
+        @Part("name") name: String?,
         @Part photoProfile: MultipartBody.Part?
     ): String
 

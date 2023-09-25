@@ -42,7 +42,7 @@ class ProfileViewModel @Inject constructor(
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONObject(ApiCode.DATA).toObject<User>(gson)
                     userDao.insert(data.copy(idRoom = 1))
-                    _apiResponse.emit(ApiResponse().responseSuccess())
+                    _apiResponse.emit(ApiResponse().responseSuccess("Edit Profile Success"))
 
                 }
 
@@ -59,16 +59,15 @@ class ProfileViewModel @Inject constructor(
         photo: File
     ) = viewModelScope.launch {
         val fileBody = photo.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        val filePart = MultipartBody.Part.createFormData("photo_profile", photo.name, fileBody)
+        val filePart = MultipartBody.Part.createFormData("photo", photo.name, fileBody)
         _apiResponse.emit(ApiResponse().responseLoading())
-        observer(
-            block = { apiService.editProfilePhoto(name, filePart) },
-            toast = false,
-            responseListener = object : ApiObserver.ResponseListener {
+        ApiObserver({ apiService.editProfilePhoto(name, filePart) },
+            false,
+            object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONObject(ApiCode.DATA).toObject<User>(gson)
                     userDao.insert(data.copy(idRoom = 1))
-                    _apiResponse.emit(ApiResponse().responseSuccess())
+                    _apiResponse.emit(ApiResponse().responseSuccess("Edit Profile Success"))
 
                 }
 

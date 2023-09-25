@@ -75,6 +75,7 @@ class ProfileActivity :
             viewModel.editProfile(name)
         } else {
             viewModel.editProfilePhoto(name, photo)
+            tos("$filePhoto")
         }
 
     }
@@ -212,6 +213,10 @@ class ProfileActivity :
                             ApiStatus.LOADING -> loadingDialog.show()
                             ApiStatus.SUCCESS -> {
                                 when (it.message) {
+                                    " Edit Profile Success" -> {
+                                        loadingDialog.dismiss()
+                                        tos("Edit Profile Success")
+                                    }
                                     "Logout" -> {
                                         openActivity<LoginActivity> {
                                             finishAffinity()
